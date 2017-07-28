@@ -1,0 +1,344 @@
+<form name="formName">
+    <div class="heading-sec">
+        <div class="row">
+            <div class="col-md-12 column">
+                <div class="heading-profile">
+                    <toggle-switch ng-model="formData.status" class="switch-small switch-success pull-right"></toggle-switch>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-content">
+        <div class="widget">
+            <div class="form-elements-sec">
+                <div>
+                    <div class="row">
+                        <div class="row">
+                            <div class="col-md-6" ng-if="assignment.customer">
+                                <div class="form-group">
+                                    <label>{{assignment.name}}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group" ng-if="showCreditLimit && showCreditLimitOnEdit" style="color: red">
+                                    <label>Credit Limit Pending : </label><span><b> {{creditPending | number}}</b></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6" ng-if="assignment.customer">
+                            <div class="form-group">
+                                <label>Appointed By: </label> {{assignment.customer.name}}
+                            </div>
+                        </div>
+                        <div class="col-md-6" ng-if="assignment.insurerClaimId || assignment.brokerClaimId || assignment.insuredClaimId">
+                            <div class="form-group">
+                                <label>Claim Number: </label><span ng-if="assignment.insurerClaimId">Insurer:{{assignment.insurerClaimId}}</span>
+                                <span ng-if="assignment.brokerClaimId">Broker:{{assignment.brokerClaimId}}</span> <span ng-if="assignment.insuredClaimId">Insured:{{assignment.insuredClaimId}}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6" ng-if="assignment.customer">
+                            <div class="form-group">
+                                <label>Insurer: </label> {{assignment.insurerOffice.name}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Insured: </label> {{assignment.insuredOffice.name}}
+                            </div>
+                        </div>
+                        <div class="col-md-6" ng-if="assignment.customer">
+                            <div class="form-group">
+                                <label>Department: </label> {{assignment.department.name}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Cause of Loss: </label> {{assignment.causeOfLoss.name}}
+                            </div>
+                        </div>
+                        <div class="col-md-6" ng-if="assignment.products.length!==0">
+                            <div class="form-group">
+                                <label>Classification: </label> {{assignment.products[0].product.category.name}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+
+
+                            <div class="form-group">
+                                <label>Nature of Loss: </label>
+                                <span ng-repeat="nature in assignment.natureOfLoss">
+                                    {{nature.name}}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-6" ng-if="assignment.products.length>0">
+                            <div class="form-group">
+                                <label>Product: </label>
+                                <span ng-repeat="product in assignment.products">
+                                    {{product.product.name}}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-6" ng-if="assignment.policyType!==undefined">
+                            <div class="form-group">
+                                <label>Policy Type: </label>{{assignment.policyType.name}}
+                            </div>
+                        </div>
+                        <div class="col-md-6" ng-if="assignment.products.length>0">
+                            <div class="form-group">
+                                <label>Item: </label>
+                                <span ng-repeat="product in assignment.products">
+                                    {{product.item}}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-6" ng-if="assignment.policyDoc !== undefined">
+                            <div class="form-group">
+                                <label>Policy Number: </label> {{policyDetails}}
+                            </div>
+                        </div>
+                        <div class="col-md-6" ng-if="(surveyDate !== undefined || surveyDate !=='Invalid date')">
+                            <div class="form-group">
+                                <label>Surveyed On: </label> {{surveyDate}}
+                            </div>
+                        </div>
+                        <div class="col-md-6" ng-if="(assignedDate !== undefined || assignedDate !=='Invalid date')">
+                            <div class="form-group">
+                                <label>Assigned On: </label>{{assignedDate}}
+                            </div>
+                        </div>
+                        <div class="col-md-6 " ng-if="assignment.survey[assignment.survey.length-1].employee.name !==undefined ">
+                            <div class="form-group ">
+                                <label>Survey Employee: </label> {{assignment.survey[assignment.survey.length-1].employee.name}}
+                            </div>
+                        </div>
+                        <div class="col-md-6 " ng-if="(ilaDate !==undefined || ilaDate !=='Invalid date')">
+                            <div class="form-group ">
+                                <label>ILA Date: </label>{{ilaDate}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget">
+            <div class="form-elements-sec">
+                <div class="sec">
+                    <div class="row" ng-if="!formData._id">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Select Invoice Template*</label>
+                                <multiple-select my-enter name="templateInvoice" required ng-model="formData.templateInvoice" ng-name="templateInvoice" api="searchTemplateInvoice"></multiple-select>
+                                <div class="error-msg" ng-show="formName.templateInvoice.$invalid">Please Enter Template</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6  invoice--go" ng-if="formData.templateInvoice && formData.billedTo">
+                            <button class="btn btn-default" ng-click="getTemplateDetails(formData.templateInvoice)">GO</button>
+                            <div class="pull-right" style="color: red"><label>Credit Limit Pending : </label><span><b> {{creditPending | number}}</b></span></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="row">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Billed To*</label>
+                                <ui-select ng-change="calculateCreditPending(formData.billedTo)" ng-model="formData.billedTo" theme="bootstrap" required>
+                                    <ui-select-match placeholder="Use Dropdown to Select Or Type to Search Others">{{$select.selected.name}}</ui-select-match>
+                                    <ui-select-choices repeat="department in billedTos | filter:$select.search" refresh="refreshBilledTos($select.search)" ui-disable-choice="billedTos.length==0">{{department.name}}</ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Fee Narration</label>
+                                <input type="text" ng-model="formData.narrationFee" placeholder="Enter Narration Fee" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Gross Assessed Loss</label>
+                                <input type="text" cleave="template.currencyNoDecimal" ng-model="formData.grossAssessedLoss" placeholder="Enter Gross Assessed Loss"
+                                    class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Gross Salvage</label>
+                                <input type="text" cleave="template.currencyNoDecimal" ng-model="formData.grossSalvage" placeholder="Enter Gross Salvage"
+                                    class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Taxes</label>
+                                <input type="text" cleave="template.currencyNoDecimal" ng-model="formData.taxes" placeholder="Enter Taxes" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Excess Franchise</label>
+                                <input type="text" cleave="template.currencyNoDecimal" ng-model="formData.excessFranchise" placeholder="Enter Excess Franchise"
+                                    class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Gross Depreciation</label>
+                                <input type="text" cleave="template.currencyNoDecimal" ng-model="formData.grossDepreciation" placeholder="Enter Gross Depreciation"
+                                    class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Gross Under Insurance</label>
+                                <input type="text" cleave="template.currencyNoDecimal" ng-model="formData.grossUnderInsurance" placeholder="Enter Gross Under Insurance"
+                                    class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Net Payable</label>
+                                <input type="text" cleave="template.currencyNoDecimal" ng-model="formData.netPayable" placeholder="Enter Net Payable" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget" ng-if="showForm">
+            <div class="form-elements-sec">
+                <div class="sec">
+                    <div class="clearfix"></div>
+                    <div class="form-builder">
+                        <div class="form-repeater">
+                            <div class="form-builder-head has-pad row-item">
+                                <div class="col-item col-item-20">
+                                    <p>Name</p>
+                                </div>
+                                <div class="col-item col-item-20">
+                                    <p>Description</p>
+                                </div>
+                                <div class="col-item col-item-15">
+                                    <p>Unit</p>
+                                </div>
+                                <div class="col-item col-item-15">
+                                    <p>Rate</p>
+                                </div>
+                                <div class="col-item col-item-15">
+                                    <p>Quantity</p>
+                                </div>
+                                <div class="col-item col-item-15">
+                                    <p>Amount</p>
+                                </div>
+                            </div>
+
+                            <div class="form-builder-hr" dragular dragular-model="formData">
+                                <div class="form-builder-item row-item" ng-repeat="form in formData.invoiceList">
+                                    <div class="right-float mark-float">
+                                        <i class="fa fa-bars handleBar"></i>
+                                    </div>
+                                    <div class="col-item col-item-20">
+                                        <ui-select ng-model="form" ng-change="getAll(form,$index)" theme="bootstrap" sortable="true">
+                                            <ui-select-match placeholder="Select">
+                                                <span class="detail-title" title="{{$select.selected.name}}">{{$select.selected.name}}</span>
+                                            </ui-select-match>
+                                            <ui-select-choices repeat="d in descriptions | filter: $select.search" refresh="getdescriptions($select.search)" refresh-delay="0">
+                                                <span>{{d.name}}</span>
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                    <div class="col-item col-item-20">
+                                        <input type="text" title="{{form.description}}" ng-model="form.description" placeholder="Enter Unit" class="form-control">
+                                    </div>
+                                    <div class="col-item col-item-15">
+                                        <input type="text" ng-model="form.unit" placeholder="Enter Unit" class="form-control" readonly>
+                                    </div>
+                                    <div class="col-item col-item-15">
+                                        <input type="text" cleave="template.currency" ng-model="form.rate" placeholder="Enter Rate" class="form-control text-right"
+                                            ng-change="calAmt(form.rate,form.quantity,$index)">
+                                    </div>
+                                    <div class="col-item col-item-15">
+                                        <input type="text" cleave="template.currency" min="0" ng-model="form.quantity" placeholder="Enter Quantity" class="form-control text-right"
+                                            ng-change="calAmt(form.rate,form.quantity,$index)">
+                                    </div>
+                                    <div class="col-item col-item-15">
+                                        <input type="text" cleave="template.currency" ng-model="form.amount" placeholder="Total" class="form-control text-right"
+                                            readonly>
+                                    </div>
+                                    <div class="mark-float">
+                                        <i class="fa fa-plus-circle success" ng-click="addHead();"></i>
+                                        <i class="fa fa-minus-circle danger" ng-click="removeHead($index);"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget" ng-if="showForm">
+            <div class="form-elements-sec">
+                <div class="sec-total">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Sub-Total: </label> {{formData.subTotal|number:2}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-repeat="form1 in formData.tax track by $index">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>{{form1.name}}@{{form1.percent}}%: </label> {{form1.amount|number:2}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Rounding-Off: </label> {{formData.roundOff|number:2}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Grand-Total: </label> {{formData.grandTotal|number:2}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="widget" ng-if="showForm && !approval">
+            <div class="form-elements-sec">
+                <div class="sec">
+                    <label>Supervisor </label>
+                    <div class="col-item" style="flex:1; padding-left:25%; width:75%">
+                        <select class="form-control" ng-model="formData.officeEmail" required>
+                    <option ng-value="{{employees.officeEmail}}" ng-repeat="employees in employee">{{employees.name}} &lt;{{employees.email}}&gt;</option>
+             </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <!--<div ng-if="hasGST">-->
+        <div class="text-center mt20 odd-even-button" ng-if="!disableSave">
+            <button class="btn btn-primary" ng-click="previewPdf(formData)" ng-if="showForm">PDF Preview</button>
+            <button class="btn btn-primary" ng-click="saveDraft(formData)" ng-if="showForm">Save As Draft</button>
+            <button class="btn btn-warning" ng-click="saveModel(formData)" ng-if="showForm && !approval" ng-disabled="formName.$invalid">Send for Authorisation</button>
+            <button class="btn btn-success" ng-click="saveModel(formData)" ng-if="showForm && approval" ng-disabled="formName.$invalid">Save & Authorize</button>
+            <button class="btn btn-danger" ng-click="comment('Reject')" ng-if="showForm && approval" ng-disabled="formName.$invalid">Reject</button>
+            <button class="btn btn-warning" ng-click="comment('Revise')" ng-if="showForm && approval" ng-disabled="formName.$invalid">Save & Regenerate</button>
+            <a class="btn btn-danger" ng-click="cancel()">Cancel</a>
+        </div>
+        <div class="text-center mt20 odd-even-button" ng-if="saveForInvoiceList">
+            <button class="btn btn-primary" ng-click="saveRevise()" ng-if="showForm">Revise</button>
+            <a class="btn btn-danger" ng-click="cancel()">Cancel</a>
+        </div>
+        <!--</div>-->
+    </div>
+</form>
