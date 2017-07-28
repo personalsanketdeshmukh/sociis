@@ -5,6 +5,31 @@ gfs.mongo = mongoose.mongo;
 
 module.exports = _.cloneDeep(require("sails-wohlig-controller"));
 var controller = {
+
+    // Start
+
+    userRegistration: function (req, res) {
+        if (req.body) {
+            req.model.userRegistration(req.body, res.callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Request"
+            });
+        }
+    },
+    userLogin: function (req, res) {
+        if (req.body) {
+            req.model.userLogin(req.body, res.callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Request"
+            });
+        }
+    },
+
+    //  End
     loginFacebook: function (req, res) {
         passport.authenticate('facebook', {
             scope: ['public_profile', 'user_friends', 'email'],

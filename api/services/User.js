@@ -5,76 +5,132 @@ var schema = new Schema({
   },
   email: {
     type: String,
-    validate: validators.isEmail()
+    validate: validators.isEmail(),
+  },
+  mobile: {
+    type: String,
+    default: "",
+    unique: true
+  },
+  password: {
+    type: String,
+    default: "1234567890"
   },
   photo: {
     type: String,
     default: ""
   },
-  password: {
-    type: String,
-    default: ""
+  creditLimit: {
+    type: Number,
+    default: 10000
   },
-  forgotPassword: {
-    type: String,
-    default: ""
-  },
-  mobile: {
-    type: String,
-    default: ""
-  },
-  otp: {
-    type: String,
-    default: ""
-  },
-  accessToken: {
-    type: [String],
-    index: true
-  },
-  googleAccessToken: String,
-  googleRefreshToken: String,
-  oauthLogin: {
-    type: [{
-      socialId: String,
-      socialProvider: String
-    }],
-    index: true
+  total: {
+    type: Number,
+    default: 0
   },
   accessLevel: {
     type: String,
-    default: "User",
-    enum: ['User', 'Admin']
-  },
-  timeline: {
-    type: [{
-      type: Schema.Types.ObjectId,
-      ref: "Timeline",
-    }],
-    index: true,
-    restrictedDelete: true
-  },
-  employee: {
-    type: Schema.Types.ObjectId,
-    ref: "Employee",
-    index: true,
-    key: "user"
-  },
+    default: "Customer",
+    enum: ['Customer', 'Employee', 'Admin']
+  }
+
+  // forgotPassword: {
+  //   type: String,
+  //   default: ""
+  // },
+  // otp: {
+  //   type: String,
+  //   default: ""
+  // },
+  // accessToken: {
+  //   type: [String],
+  //   index: true
+  // },
+  // googleAccessToken: String,
+  // googleRefreshToken: String,
+  // oauthLogin: {
+  //   type: [{
+  //     socialId: String,
+  //     socialProvider: String
+  //   }],
+  //   index: true
+  // },
+
+  // timeline: {
+  //   type: [{
+  //     type: Schema.Types.ObjectId,
+  //     ref: "Timeline",
+  //   }],
+  //   index: true,
+  //   restrictedDelete: true
+  // },
+  // employee: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: "Employee",
+  //   index: true,
+  //   key: "user"
+  // },
 });
 
 schema.plugin(deepPopulate, {
-  populate: {
-    'employee': {
-      select: ''
-    }
-  }
+  // populate: {
+  //   // 'employee': {
+  //   //   select: ''
+  //   // }
+  // }
 });
 schema.plugin(uniqueValidator);
 schema.plugin(timestamps);
 
 module.exports = mongoose.model('User', schema);
 
-var exports = _.cloneDeep(require("sails-wohlig-service")(schema, "employee", "employee"));
+var exports = _.cloneDeep(require("sails-wohlig-service")(schema));
 var model = {
+
+  // 
+  // *************************  New Function ************************
+  userRegistration: function (data, callback) {
+    var Model = this;
+    var Const = this(data);
+    console.log("Data", data)
+    Model.findOne({
+      $or: [{
+        mobile: data.userLoginField
+      }]
+    }).exec(function (err, verification) {
+      if (err) {
+        callback(err, null)
+      } else if (_.isEmpty(verification)) {
+        Model.saveData(data, function (err, data2) {
+          if (err) {
+            callback(err, null);
+          } else {
+            callback(null, data2);
+          }
+        });
+      } else {
+        callback(null, verification);
+      }
+    });
+  },
+  userLogin: function (data, callback) {
+    User.findOne({
+      $or: [{
+        email: data.userLoginField
+      }, {
+        mobile: data.userLoginField
+      }],
+      password: data.password
+    }).exec(function (err, data) {
+      if (err) {
+        callback(err, null);
+      } else {
+        callback(null, data);
+      }
+    });
+  },
+
+  // 
 
   existsSocial: function (user, callback) {
     var Model = this;
@@ -205,14 +261,14 @@ var model = {
     //   }
     // });
 
-      var reqUrl = {
-        url: 'https://www.googleapis.com/gmail/v1/users/' + req.user.email + "/" + req.body.url,
-        form: {
-          refresh_token: req.user.googleRefreshToken,
-          client_id: GoogleclientId,
-          raw: req.body.raw
-        }
-      };
+    var reqUrl = {
+      url: 'https://www.googleapis.com/gmail/v1/users/' + req.user.email + "/" + req.body.url,
+      form: {
+        refresh_token: req.user.googleRefreshToken,
+        client_id: GoogleclientId,
+        raw: req.body.raw
+      }
+    };
     // console.log("reqUrl , ", reqUrl);
     request.post(reqUrl, function (err, httpResponse, body) {
       if (err) {
@@ -284,7 +340,7 @@ var model = {
       //     grant_type: 'refresh_token',
       //   }
       // });
-      
+
       request.post({
         url: 'https://www.googleapis.com/oauth2/v4/token',
         form: {
@@ -313,7 +369,7 @@ var model = {
     makeGmailCall();
   },
 
-   gmailCallWithAttachment: function (req, callback) {
+  gmailCallWithAttachment: function (req, callback) {
     var noTry = 0;
     var labelIds = "";
 
