@@ -470,6 +470,7 @@ var navigationservice = angular.module('navigationservice', [])
             getRoleSingle: function (arr) {
                 return getRoleSingle(arr);
             },
+
             getnav: function () {
                 var approvalPendingCount = 0;
                 var surveyApprovals = 0;
@@ -610,6 +611,12 @@ var navigationservice = angular.module('navigationservice', [])
                 $http.post(adminurl + 'Assignment/editSurvey', formData).success(function (data) {
                     callback(data);
                 });
+            },
+            userRegistration: function (formData, callback) {
+                $http.post(adminurl + 'user/userRegistration', formData).success(callback);
+            },
+            userLogin: function (formData, callback) {
+                $http.post(adminurl + 'user/userLogin', formData).success(callback);
             },
             employeeSearch: function (formData, i, callback) {
                 console.log("formData : ", formData);
