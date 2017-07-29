@@ -32,6 +32,10 @@ var schema = new Schema({
     type: String,
     default: "Customer",
     enum: ['Customer', 'Employee', 'Admin']
+  },
+  isverified: {
+    type: Boolean,
+    default: false
   }
 
   // forgotPassword: {
